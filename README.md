@@ -1,3 +1,32 @@
+# JVM Tools for VS Code
+
+This is the very first release of JVM Tools for VS Code. Currently, it doesn't do much...
+
+## Features
+
+1. List running JVMs with `jps`.
+1. Starts `jconsole` on the selected JVM.
+
+## Requirements
+
+You must have a JDK installed.
+
+## Extension Settings
+
+No settings at this stage.
+
+## Known Issues
+
+PNG icons are broken.
+
+## Release Notes
+
+Not much, really.
+
+### 0.0.1
+
+The very first release of what you just read above.
+
 
 # Contributing
 
