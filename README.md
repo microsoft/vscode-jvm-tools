@@ -1,6 +1,6 @@
 # JVM Tools for VS Code
 
-This is the very first preview release of JVM Tools for VS Code. Currently, it doesn't do much, except for:
+This is the very first preview release of JVM Tools for VS Code.
 
 ## Features
 
