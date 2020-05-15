@@ -1,6 +1,6 @@
 # JVM Tools for VS Code
 
-This is the very first release of JVM Tools for VS Code. Currently, it doesn't do much...
+This is the very first preview release of JVM Tools for VS Code. Currently, it doesn't do much, except for:
 
 ## Features
 
@@ -17,15 +17,11 @@ No settings at this stage.
 
 ## Known Issues
 
-PNG icons are broken.
+Not really.
 
 ## Release Notes
 
-Not much, really.
-
-### 0.0.1
-
-The very first release of what you just read above.
+See [CHANGELOG](./CHANGELOG.md) for details.
 
 
 # Contributing

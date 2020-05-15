@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT license.
+
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as cp from 'child_process';
@@ -37,10 +40,7 @@ export class JVM extends vscode.TreeItem {
 
     contextValue = 'jvm';
 
-    iconPath = {
-        light: path.join(__filename, '..', '..', 'resources', 'light', 'dependency.svg.png'),
-        dark: path.join(__filename, '..', '..', 'resources', 'dark', 'dependency.svg.png')
-    };
+    iconPath = new vscode.ThemeIcon("symbol-property");
 }
 
 class JVMProvider implements vscode.TreeDataProvider<JVM> {

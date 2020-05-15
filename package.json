@@ -2,7 +2,7 @@
 	"name": "jvm-tools",
 	"displayName": "JVM Tools",
 	"description": "(Preview) JVM Tools Accessible from Visual Studio Code",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"publisher": "brunoborges",
 	"license": "MIT",
 	"preview": true,
@@ -27,18 +27,12 @@
 			{
 				"command": "jvmList.refresh",
 				"title": "Refresh",
-				"icon": {
-					"light": "resources/light/refresh.svg.png",
-					"dark": "resources/dark/refresh.svg.png"
-				}
+				"icon": "$(refresh)"
 			},
 			{
 				"command": "jvmList.openJConsole",
-				"title": "JConsole",
-				"icon": {
-					"light": "resources/light/edit.svg.png",
-					"dark": "resources/dark/edit.svg.png"
-				}
+				"title": "Open JConsole",
+				"icon": "$(play)"
 			}
 		],
 		"views": {
