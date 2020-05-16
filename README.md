@@ -1,6 +1,6 @@
 # JVM Tools for VS Code
 
-This is the very first preview release of JVM Tools for VS Code. Currently, it doesn't do much, except for:
+This is the very first preview release of JVM Tools for VS Code.
 
 ## Features
 
@@ -42,9 +42,6 @@ What else will this extension eventually do?
     java -XX:StartFlightRecording=duration=30s,settings=profile,filename=leak.jfr MemoryLeak
 
     jcmd 1 JFR.start duration=30s settings=profile filename=path/filename.jfr
-
-
-
 
 # Contributing
 

@@ -1,12 +1,12 @@
 {
 	"name": "jvm-tools",
 	"displayName": "JVM Tools",
-	"description": "(Preview) JVM Tools Accessible from Visual Studio Code",
+	"description": "JVM Tools Accessible from within Visual Studio Code",
 	"version": "0.0.3",
 	"publisher": "brunoborges",
 	"license": "MIT",
 	"icon": "resources/duke-toolbox.png",
-	"preview": true,
+	"preview": false,
 	"private": true,
 	"repository": {
 		"url": "https://github.com/microsoft/vscode-jvm-tools",
