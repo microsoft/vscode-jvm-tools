@@ -2,15 +2,26 @@
 	"name": "jvm-tools",
 	"displayName": "JVM Tools",
 	"description": "(Preview) JVM Tools Accessible from Visual Studio Code",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"publisher": "brunoborges",
 	"license": "MIT",
+	"icon": "resources/duke-toolbox.png",
 	"preview": true,
 	"private": true,
 	"repository": {
 		"url": "https://github.com/microsoft/vscode-jvm-tools",
 		"type": "git"
 	},
+	"bugs": {
+		"url": "https://github.com/Microsoft/vscode-jvm-tools/issues"
+	},
+	"keywords": [
+		"java",
+		"jvm",
+		"jdk",
+		"profile",
+		"debug"
+	],
 	"badges": [],
 	"engines": {
 		"vscode": "^1.45.0"
@@ -32,7 +43,8 @@
 			{
 				"command": "jvmList.openJConsole",
 				"title": "Open JConsole",
-				"icon": "$(play)"
+				"icon": "$(play)",
+				"enablement": "view == jvmList && viewItem == jvm"
 			}
 		],
 		"views": {
@@ -54,10 +66,39 @@
 			"view/item/context": [
 				{
 					"command": "jvmList.openJConsole",
+					"when": "view == jvmList && viewItem == jvm"
+				},
+				{
+					"command": "jvmList.openJConsole",
 					"when": "view == jvmList && viewItem == jvm",
 					"group": "inline"
 				}
 			]
+		},
+		"configuration": {
+			"title": "JVM Tools",
+			"properties": {
+				"jvmtools.refreshTimeout": {
+					"type": "number",
+					"default": 5,
+					"description": "Time in seconds the view will refresh the list of JVMs. (default: 5)"
+				},
+				"jvmtools.jfrStartOptions": {
+					"type": "string",
+					"default": "duration=30s settings=profile filename=./jfr-recording.jfr"
+				},
+				"jvmtools.logLevel": {
+					"type": "string",
+					"enum": [
+						"error",
+						"info",
+						"verbose"
+					],
+					"default": "info",
+					"description": "%configuration.java.test.log.level.description%",
+					"scope": "window"
+				}
+			}
 		}
 	},
 	"scripts": {

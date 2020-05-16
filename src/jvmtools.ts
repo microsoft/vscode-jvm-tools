@@ -4,22 +4,62 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as cp from 'child_process';
+import { Timer } from './timer';
 
 export class JVMTools {
 
     private jvmList: vscode.TreeView<JVM>;
+    private refreshTimer: Timer;
 
     constructor(context: vscode.ExtensionContext) {
-
         // Register JVM List View
         const treeDataProvider = new JVMProvider();
         this.jvmList = vscode.window.createTreeView('jvmList', { treeDataProvider });
+        this.jvmList.onDidChangeVisibility(e => e.visible ? this.refreshTimer.start() : this.refreshTimer.stop(), undefined, context.subscriptions);
 
-        // Register Refresh List
+        // Register Commands
         vscode.commands.registerCommand('jvmList.refresh', () => treeDataProvider.refresh());
-        vscode.commands.registerCommand('jvmList.openJConsole', (jvm: JVM) => new JConsole().open(jvm));
+        vscode.commands.registerCommand('jvmList.openJConsole', (jvm: JVM) => this.openJConsole(jvm));
+        vscode.commands.registerCommand('jvmList.threadDump', (jvm: JVM) => this.performThreadDump(jvm));
+
+        // Start refresh timer
+        this.refreshTimer = new Timer(this.getConfig<number>("refreshTimeout"));
+        this.refreshTimer.onTimeElapsed(() => {
+            treeDataProvider.refresh();
+        });
     }
 
+    stopRefresh(): void {
+        this.refreshTimer.stop();
+    }
+
+    getConfig<T>(key: string): T {
+        const config = vscode.workspace.getConfiguration("jvm.tools");
+        return config.get<unknown>(key) as T;
+    }
+
+    openJConsole(jvm: JVM) {
+        cp.exec('jconsole ' + jvm.pid);
+    }
+
+    performThreadDump(jvm: JVM) {
+
+    }
+
+    startJFR(jvm: JVM) {
+        const options = this.getConfig("jfrStartOptions");
+        cp.exec(`jcmd ${jvm.pid} JFR.start ${options}`);
+    }
+}
+
+export interface JVMToolsConfig {
+    refreshTimeout: number;
+    jfrStartOptions: string;
+    jfrDumpOptions: string;
+    gcLogOptions: string;
+    jinfoOptions: string;
+    jconsoleOptions: string;
+    threadDumpOptions: string;
 }
 
 export class JVM extends vscode.TreeItem {
@@ -67,10 +107,9 @@ class JVMProvider implements vscode.TreeDataProvider<JVM> {
 
 class JPS {
 
-    jpspid: number = 0;
+    private jpspid: number = 0;
 
     parseJpsOutput(value: string | Buffer): JVM[] {
-        console.log('Parsing value: ' + value);
         if (value instanceof Buffer) {
             value = value.toString();
         }
@@ -89,7 +128,6 @@ class JPS {
             }
         }
         list.sort((a, b) => a.pid - b.pid);
-        console.log('JPS parsing result: ' + list);
         return list;
     }
 
@@ -106,9 +144,6 @@ class JPS {
             let list: JVM[] = [];
 
             jps.stdout.on('data', (data) => {
-                console.log('log> stdout data event: ');
-                console.log(data.toString());
-                console.log('log> EOF');
                 let jvms = this.parseJpsOutput(data);
                 if (jvms !== null) {
                     list = list.concat(jvms);
@@ -116,31 +151,10 @@ class JPS {
             });
 
             jps.on('close', (code) => {
-                console.log(`jps process exited with code ${code}`);
                 resolve(list);
             });
 
             jps.unref();
         });
-    }
-}
-
-class JCMD {
-
-}
-
-class JFR {
-
-}
-
-class JConsole {
-    open(jvm: JVM) {
-        cp.exec('jconsole ' + jvm.pid);
-    }
-}
-
-class JInfo {
-    extract(pid: number): string {
-        return '';
     }
 }
