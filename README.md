@@ -23,6 +23,28 @@ Not really.
 
 See [CHANGELOG](./CHANGELOG.md) for details.
 
+## Roadmap
+
+What else will this extension eventually do?
+
+1. Get snapshot of JVM status
+1. Start debugging selected JVM
+1. Start/Stop/Dump JDK Flight Recorder
+1. Perform a Thread Dump
+1. Start/Stop recording GC log
+
+### Useful resources
+
+- https://dzone.com/articles/turning-gc-logging-runtime
+
+#### Start JFR
+
+    java -XX:StartFlightRecording=duration=30s,settings=profile,filename=leak.jfr MemoryLeak
+
+    jcmd 1 JFR.start duration=30s settings=profile filename=path/filename.jfr
+
+
+
 
 # Contributing
 
