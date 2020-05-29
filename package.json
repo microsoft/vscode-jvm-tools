@@ -45,6 +45,11 @@
 				"title": "Open JConsole",
 				"icon": "$(play)",
 				"enablement": "view == jvmList && viewItem == jvm"
+			},
+			{
+				"command": "jvmList.jfrStart",
+				"title": "Start Flight Recording",
+				"icon": "$(clock)"
 			}
 		],
 		"views": {
@@ -66,6 +71,10 @@
 			"view/item/context": [
 				{
 					"command": "jvmList.openJConsole",
+					"when": "view == jvmList && viewItem == jvm"
+				},
+				{
+					"command": "jvmList.jfrStart",
 					"when": "view == jvmList && viewItem == jvm"
 				},
 				{

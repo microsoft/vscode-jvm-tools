@@ -21,6 +21,7 @@ export class JVMTools {
         vscode.commands.registerCommand('jvmList.refresh', () => treeDataProvider.refresh());
         vscode.commands.registerCommand('jvmList.openJConsole', (jvm: JVM) => this.openJConsole(jvm));
         vscode.commands.registerCommand('jvmList.threadDump', (jvm: JVM) => this.performThreadDump(jvm));
+        vscode.commands.registerCommand('jvmList.jfrStart', (jvm: JVM) => this.startJFR(jvm));
 
         // Start refresh timer
         this.refreshTimer = new Timer(this.getConfig<number>("refreshTimeout"));
@@ -34,7 +35,7 @@ export class JVMTools {
     }
 
     getConfig<T>(key: string): T {
-        const config = vscode.workspace.getConfiguration("jvm.tools");
+        const config = vscode.workspace.getConfiguration("jvmtools");
         return config.get<unknown>(key) as T;
     }
 
@@ -43,23 +44,13 @@ export class JVMTools {
     }
 
     performThreadDump(jvm: JVM) {
-
+        console.log("Coming soon...");
     }
 
     startJFR(jvm: JVM) {
         const options = this.getConfig("jfrStartOptions");
-        cp.exec(`jcmd ${jvm.pid} JFR.start ${options}`);
+        cp.exec(`jcmd ${jvm.pid} JFR.start ${options}`, );
     }
-}
-
-export interface JVMToolsConfig {
-    refreshTimeout: number;
-    jfrStartOptions: string;
-    jfrDumpOptions: string;
-    gcLogOptions: string;
-    jinfoOptions: string;
-    jconsoleOptions: string;
-    threadDumpOptions: string;
 }
 
 export class JVM extends vscode.TreeItem {
@@ -96,9 +87,7 @@ class JVMProvider implements vscode.TreeDataProvider<JVM> {
     }
 
     getChildren(element?: JVM): vscode.ProviderResult<JVM[]> {
-        if (element) {
-            // never?
-        } else {
+        if (!element) {
             return new JPS().listJVMs();
         }
     }
