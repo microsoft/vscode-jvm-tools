@@ -1,8 +1,8 @@
-package com.microsoft.java;
+package com.microsoft.jvmms;
 
 import com.sun.tools.attach.VirtualMachine;
 
-public class JavaProcessList {
+public class Start {
 
     public static void main(String[] args) {
         VirtualMachine.list()
