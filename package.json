@@ -50,6 +50,11 @@
 				"command": "jvmList.jfrStart",
 				"title": "Start Flight Recording",
 				"icon": "$(clock)"
+			},
+			{
+				"command": "jvmList.threadStackTrace",
+				"title": "Perform Thread StackTrace",
+				"enablement": "view == jvmList && viewItem == jvm"
 			}
 		],
 		"views": {
@@ -81,6 +86,10 @@
 					"command": "jvmList.openJConsole",
 					"when": "view == jvmList && viewItem == jvm",
 					"group": "inline"
+				},
+				{
+					"command": "jvmList.threadStackTrace",
+					"when": "view == jvmList && viewItem ==jvm"
 				}
 			]
 		},

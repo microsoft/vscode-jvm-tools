@@ -5,6 +5,8 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as cp from 'child_process';
 import { Timer } from './timer';
+import * as fs from 'fs';
+import * as os from 'os';
 
 export class JVMTools {
 
@@ -22,6 +24,7 @@ export class JVMTools {
         vscode.commands.registerCommand('jvmList.openJConsole', (jvm: JVM) => this.openJConsole(jvm));
         vscode.commands.registerCommand('jvmList.threadDump', (jvm: JVM) => this.performThreadDump(jvm));
         vscode.commands.registerCommand('jvmList.jfrStart', (jvm: JVM) => this.startJFR(jvm));
+        vscode.commands.registerCommand('jvmList.threadStackTrace', (jvm: JVM) => this.performThreadStackTrace(jvm));
 
         // Start refresh timer
         this.refreshTimer = new Timer(this.getConfig<number>("refreshTimeout"));
@@ -50,6 +53,32 @@ export class JVMTools {
     startJFR(jvm: JVM) {
         const options = this.getConfig("jfrStartOptions");
         cp.exec(`jcmd ${jvm.pid} JFR.start ${options}`, );
+    }
+
+    performThreadStackTrace(jvm:JVM){
+        cp.exec(`jhsdb jstack --pid ${jvm.pid}`, (error, stdout, stderr) => {
+            if (error) {
+                console.log(`Error executing command: ${error.message}`);
+                return;
+            }
+
+            //Write thread dump to file
+            var filePath = path.join(os.tmpdir(), `${jvm.appname}-${new Date().toDateString()}.txt`);
+            var content = stdout ? stdout : stderr;
+
+            fs.writeFile(filePath, content, (error) => {
+                if (error) {
+                    console.log(`Error:${error.message}`);
+                    return;
+                }
+
+                //Open dump file in vscode
+                var openPath = vscode.Uri.file(filePath);
+                vscode.workspace.openTextDocument(openPath).then(doc => {
+                    vscode.window.showTextDocument(doc,vscode.ViewColumn.Active, false);
+                });
+            });
+        });
     }
 }
 
