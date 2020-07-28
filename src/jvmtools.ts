@@ -22,7 +22,6 @@ export class JVMTools {
         // Register Commands
         vscode.commands.registerCommand('jvmList.refresh', () => treeDataProvider.refresh());
         vscode.commands.registerCommand('jvmList.openJConsole', (jvm: JVM) => this.openJConsole(jvm));
-        vscode.commands.registerCommand('jvmList.threadDump', (jvm: JVM) => this.performThreadDump(jvm));
         vscode.commands.registerCommand('jvmList.jfrStart', (jvm: JVM) => this.startJFR(jvm));
         vscode.commands.registerCommand('jvmList.threadStackTrace', (jvm: JVM) => this.performThreadStackTrace(jvm));
 
@@ -39,30 +38,31 @@ export class JVMTools {
 
     getConfig<T>(key: string): T {
         const config = vscode.workspace.getConfiguration("jvmtools");
-        return config.get<unknown>(key) as T;
+        if (config.has(key)) {
+            return config.get<unknown>(key) as T;
+        } else {
+            return "" as any;
+        }
     }
 
     openJConsole(jvm: JVM) {
         cp.exec('jconsole ' + jvm.pid);
     }
 
-    performThreadDump(jvm: JVM) {
-        console.log("Coming soon...");
-    }
-
     startJFR(jvm: JVM) {
         const options = this.getConfig("jfrStartOptions");
-        cp.exec(`jcmd ${jvm.pid} JFR.start ${options}`, );
+        cp.exec(`jcmd ${jvm.pid} JFR.start ${options}`,);
     }
 
-    performThreadStackTrace(jvm:JVM){
-        cp.exec(`jhsdb jstack --pid ${jvm.pid}`, (error, stdout, stderr) => {
+    performThreadStackTrace(jvm: JVM) {
+        const options = this.getConfig("threadDumpOptions");
+        cp.exec(`jcmd ${jvm.pid} Thread.print ${options}`, (error, stdout, stderr) => {
             if (error) {
                 console.log(`Error executing command: ${error.message}`);
                 return;
             }
 
-            //Write thread dump to file
+            // Write thread dump to file
             var filePath = path.join(os.tmpdir(), `${jvm.appname}-${new Date().toDateString()}.txt`);
             var content = stdout ? stdout : stderr;
 
@@ -72,10 +72,10 @@ export class JVMTools {
                     return;
                 }
 
-                //Open dump file in vscode
+                // Open dump file in vscode
                 var openPath = vscode.Uri.file(filePath);
                 vscode.workspace.openTextDocument(openPath).then(doc => {
-                    vscode.window.showTextDocument(doc,vscode.ViewColumn.Active, false);
+                    vscode.window.showTextDocument(doc, vscode.ViewColumn.Active, false);
                 });
             });
         });
