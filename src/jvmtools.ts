@@ -56,7 +56,7 @@ export class JVMTools {
     }
 
     performThreadStackTrace(jvm:JVM){
-        cp.exec(`jstack ${jvm.pid}`, (error, stdout, stderr) => {
+        cp.exec(`jhsdb jstack --pid ${jvm.pid}`, (error, stdout, stderr) => {
             if (error) {
                 console.log(`Error executing command: ${error.message}`);
                 return;
