@@ -17,17 +17,11 @@ export class JVMListProvider implements vscode.TreeDataProvider<JVM> {
 
     getChildren(element?: JVM): vscode.ProviderResult<JVM[]> {
         if (!element) {
-            return new JPS().listJVMs();
+            return this.listJVMs();
         }
     }
 
-}
-
-class JPS {
-
-    private jpspid: number = 0;
-
-    parseJpsOutput(value: string | Buffer): JVM[] {
+    parseJpsOutput(value: string | Buffer, jpspid: number): JVM[] {
         if (value instanceof Buffer) {
             value = value.toString();
         }
@@ -40,7 +34,7 @@ class JPS {
                 const pid = parseInt(values[0]);
                 const app = values[1];
 
-                if (pid !== this.jpspid) {
+                if (pid !== jpspid) {
                     list.push(new JVM(pid, app));
                 }
             }
@@ -52,7 +46,7 @@ class JPS {
     async listJVMs(): Promise<JVM[]> {
         return new Promise(async resolve => {
             const jps = cp.spawn('jps', { stdio: 'pipe', detached: false });
-            this.jpspid = jps.pid;
+            var jpspid = jps.pid;
 
             jps.on('error', (data) => {
                 console.error('jps error: ' + data);
@@ -62,7 +56,7 @@ class JPS {
             let list: JVM[] = [];
 
             jps.stdout.on('data', (data) => {
-                let jvms = this.parseJpsOutput(data);
+                let jvms = this.parseJpsOutput(data, jpspid);
                 if (jvms !== null) {
                     list = list.concat(jvms);
                 }
@@ -75,4 +69,5 @@ class JPS {
             jps.unref();
         });
     }
+
 }
